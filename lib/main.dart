@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 void main() => runApp(MaterialApp(
-  home: MyHomePage(),
-));
+      home: MyHomePage(),
+    ));
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -10,67 +10,36 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int counter = 0;
-  List<Widget> _list = new List<Widget>();
+  double _value = 0.0;
 
-  @override
-  void initState() {
-    for (int i = 0; i < 5; i++) {
-      Widget child = _newItem(i);
-      _list.add(child);
-    }
-  }
-
-  void _onClicked() {
-    Widget child = _newItem(counter);
-    setState(() => _list.add(child));
-  }
-
-  Widget _newItem(int i) {
-    Key key = new Key("item_${i}");
-    Container child = new Container(
-      key: key,
-      padding: new EdgeInsets.all(10.0),
-      child: new Chip(
-        label: new Text('${i} Name Here'),
-        deleteIconColor: Colors.red,
-        deleteButtonTooltipMessage: 'Delete',
-        onDeleted: () => _removeItem(key),
-        avatar: new CircleAvatar(
-          backgroundColor: Colors.grey.shade800,
-          child: new Text(i.toString()),
-        ),
-      ),
-    );
-    counter++;
-    return child;
-  }
-
-  void _removeItem(Key key) {
-    for (int i = 0; i < _list.length; i++) {
-      Widget child = _list.elementAt(i);
-      if (child.key == key) {
-        setState(() => _list.removeAt(i));
-        print('Removing ${key.toString()}');
-      }
-    }
-  }
+  void _onChanged(double value) => setState(() => _value = value);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Name here'),
-        ),
-        floatingActionButton: new FloatingActionButton(
-          onPressed: _onClicked,
-          child: new Icon(Icons.add),
+          title: Text('Sliders'),
         ),
         body: new Container(
           padding: new EdgeInsets.all(32.0),
           child: new Center(
             child: new Column(
-              children: _list,
+              children: <Widget>[
+                new Slider(value: _value, onChanged: _onChanged),
+                new Container(
+                  padding: EdgeInsets.all(32.0),
+                  child: new LinearProgressIndicator(
+                    value: _value,
+                    valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),
+                  ),
+                ),
+                new Container(
+                  padding: EdgeInsets.all(32.0),
+                  child: new CircularProgressIndicator(
+                    value: _value,
+                  ),
+                )
+              ],
             ),
           ),
         ));
