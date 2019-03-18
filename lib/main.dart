@@ -1,47 +1,62 @@
 import 'package:flutter/material.dart';
+import './customPopupMenu.dart';
 
-void main() => runApp(MaterialApp(
-      home: MyHomePage(),
-    ));
+void main() =>
+    runApp(MaterialApp(title: 'Popup Menu Button', home: MyHomePage()));
 
 class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  double _value = 0.0;
+List<CustomPopupMenu> choices = <CustomPopupMenu>[
+  CustomPopupMenu(title: 'Home', icon: Icons.home),
+  CustomPopupMenu(title: 'Bookmarks', icon: Icons.bookmark),
+  CustomPopupMenu(title: 'Settings', icon: Icons.settings),
+];
 
-  void _onChanged(double value) => setState(() => _value = value);
+class _MyHomePageState extends State<MyHomePage> {
+  CustomPopupMenu _selectedChoices = choices[0];
+
+  void _select(CustomPopupMenu choice) =>
+      setState(() => _selectedChoices = choice);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Sliders'),
-        ),
-        body: new Container(
-          padding: new EdgeInsets.all(32.0),
-          child: new Center(
-            child: new Column(
-              children: <Widget>[
-                new Slider(value: _value, onChanged: _onChanged),
-                new Container(
-                  padding: EdgeInsets.all(32.0),
-                  child: new LinearProgressIndicator(
-                    value: _value,
-                    valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),
-                  ),
-                ),
-                new Container(
-                  padding: EdgeInsets.all(32.0),
-                  child: new CircularProgressIndicator(
-                    value: _value,
-                  ),
-                )
-              ],
-            ),
-          ),
-        ));
+      appBar: AppBar(
+        backgroundColor: Colors.teal,
+        title: Text('Popup Menu Button'),
+        actions: <Widget>[
+          PopupMenuButton<CustomPopupMenu>(
+            elevation: 3.2,
+            initialValue: choices[1],
+            onCanceled: () {
+              print("You have not chossed anything");
+            },
+            tooltip: "This is a tooltip",
+            onSelected: _select,
+            itemBuilder: (BuildContext context) {
+              return choices.map((CustomPopupMenu choice) {
+                return PopupMenuItem<CustomPopupMenu>(
+                  value: choice,
+                  child: Text(choice.title),
+                );
+              }).toList();
+            },
+          )
+        ],
+      ),
+      body: bodyWidget(),
+    );
+  }
+
+  bodyWidget() {
+    return Container(
+      color: Colors.tealAccent,
+      child: SelectedOption(
+        choice: _selectedChoices,
+      ),
+    );
   }
 }
